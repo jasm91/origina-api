@@ -1,6 +1,6 @@
 {
   "name": "origina-v3",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "description": "Origina · Control Financiero v3 — gestión de obra con partidas estandarizadas (APU). Estilo de la casa: Express + Postgres + React/Vite.",
   "main": "server.js",
   "scripts": {

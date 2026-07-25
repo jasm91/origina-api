@@ -1,0 +1,773 @@
+{
+  "__og": "quote",
+  "v": 1,
+  "exportadoEn": 1784756911508,
+  "exportadoPor": "Juan Antonio",
+  "meta": {
+    "codigo": "OCS_CON_001_26 (prueba)",
+    "version": 1,
+    "cliente": "Rodrigo Marquez",
+    "proyecto": "SONY CHILE LTDA.",
+    "ubicacion": "Green Tower SC, Piso 17, Oficina 1702",
+    "superficie": "68",
+    "fecha": "1/7/2026",
+    "moneda": "Bs",
+    "plazoEjecucion": "20",
+    "grupoALabel": "Arquitectura",
+    "grupoBLabel": "Ingenierías",
+    "grupoCLabel": "Terceros (contratación directa)",
+    "estado": "Cotizada",
+    "servicio": "obra",
+    "pagos": [
+      {
+        "id": "mrwk4r7hsyid",
+        "detalle": "Anticipo",
+        "pct": "50",
+        "fechaEst": "2026-07-23",
+        "cobrado": false,
+        "fechaReal": "",
+        "montoReal": ""
+      },
+      {
+        "id": "mrwk4wllem4n",
+        "detalle": "Avance de Obra",
+        "pct": "20",
+        "fechaEst": "2026-08-12",
+        "cobrado": false,
+        "fechaReal": "",
+        "montoReal": ""
+      },
+      {
+        "id": "mrwk55myqp58",
+        "detalle": "Saldo Final",
+        "pct": "30",
+        "fechaEst": "2026-09-08",
+        "cobrado": false,
+        "fechaReal": "",
+        "montoReal": ""
+      }
+    ],
+    "precioCierre": "147500",
+    "cierreModo": "visible",
+    "logo": "",
+    "numero": "001"
+  },
+  "params": {
+    "ggOptions": [
+      12,
+      10,
+      8
+    ],
+    "utilOptions": [
+      15,
+      12.5,
+      10
+    ],
+    "ggDefault": 12,
+    "utilDefault": 15,
+    "ivaPct": 13,
+    "itPct": 3,
+    "iuePct": 25,
+    "ggCredPct": 0,
+    "incidencias": [],
+    "descuentos": [
+      {
+        "id": "mrwl4d7vw2dp",
+        "nombre": "Descuento por Diseño",
+        "tipo": "fijo",
+        "valor": "1500"
+      }
+    ],
+    "tcOficial": 6.91,
+    "tcReal": 9.97
+  },
+  "sections": [
+    {
+      "id": "mr253w3lpn7x",
+      "nombre": "OBRAS PRELIMINARES",
+      "items": [
+        {
+          "id": "mr253w3liy23",
+          "descripcion": "Replanteo general de obras internas",
+          "unidad": "m2",
+          "cantidad": "68",
+          "puDirecto": "6",
+          "ggPct": 10,
+          "utilPct": 15,
+          "contratista": {
+            "nombre": "Alvaro Moreno",
+            "razonSocial": "Margarita Seas",
+            "nit": ""
+          }
+        },
+        {
+          "id": "mr25ytb21xl7",
+          "descripcion": "Transporte de equipos, herramientas y materiales de obra",
+          "unidad": "viajes",
+          "cantidad": "1",
+          "puDirecto": "350",
+          "ggPct": 10,
+          "utilPct": 15,
+          "contratista": {
+            "nombre": "Alvaro Moreno",
+            "razonSocial": "Margarita seas",
+            "nit": "87465565",
+            "contacto": "",
+            "correo": ""
+          }
+        }
+      ],
+      "grupo": "A"
+    },
+    {
+      "id": "mr253w3l8yo3",
+      "nombre": "CONSTRUCCIÓN EN SECO",
+      "items": [
+        {
+          "id": "mr253w3ld1vs",
+          "descripcion": "M01 - Muro Dry-Wall Estándar (Estructura c/40cm + Placa 10mm c/lado) h = Cielo Falso",
+          "unidad": "m2",
+          "cantidad": "12",
+          "puDirecto": "280",
+          "ggPct": 10,
+          "utilPct": 15,
+          "contratista": {
+            "nombre": "Alvaro Moreno",
+            "razonSocial": "Margarita seas",
+            "nit": "87465565",
+            "contacto": "",
+            "correo": ""
+          },
+          "cantReal": "40",
+          "puReal": "120"
+        },
+        {
+          "id": "mr28af9wu83v",
+          "descripcion": "M02 - Muro Dry-Wall Acústico (Estructura c/40cm + Placa 12mm c/lado + Lana de Vidrio) h = Losa Existente",
+          "unidad": "m2",
+          "cantidad": "2",
+          "puDirecto": "360",
+          "ggPct": 10,
+          "utilPct": 15,
+          "contratista": {
+            "nombre": "Alvaro Moreno",
+            "razonSocial": "Margarita seas",
+            "nit": "87465565",
+            "contacto": "",
+            "correo": ""
+          }
+        },
+        {
+          "id": "mrqyna3fj77w",
+          "descripcion": "D02 - Dintel Acústico (Incluye Lana de Vidrio)",
+          "unidad": "ml",
+          "cantidad": "12",
+          "puDirecto": "240",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15,
+          "contratista": {
+            "nombre": "Alvaro Moreno",
+            "razonSocial": "Margarita seas",
+            "nit": "87465565",
+            "contacto": "",
+            "correo": ""
+          }
+        },
+        {
+          "id": "mrqyomwcgnsj",
+          "descripcion": "Corte a cielo falso (para armado de dintel)",
+          "unidad": "ml",
+          "cantidad": "12",
+          "puDirecto": "120",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15,
+          "contratista": {
+            "nombre": "Alvaro Moreno",
+            "razonSocial": "Margarita seas",
+            "nit": "87465565",
+            "contacto": "",
+            "correo": ""
+          }
+        },
+        {
+          "id": "mrqysoqro7de",
+          "descripcion": "Provisión e Instalación de Placa de Yeso Cartón  c/perfilería",
+          "unidad": "m2",
+          "cantidad": "12",
+          "puDirecto": "160",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15,
+          "contratista": {
+            "nombre": "Alvaro Moreno",
+            "razonSocial": "Margarita seas",
+            "nit": "87465565",
+            "contacto": "",
+            "correo": ""
+          }
+        },
+        {
+          "id": "mrqz81766nyh",
+          "descripcion": "Refuerzos en Muros Dry-Wall (para Televisores)",
+          "unidad": "pza",
+          "cantidad": "1",
+          "puDirecto": "120",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15,
+          "contratista": {
+            "nombre": "Alvaro Moreno",
+            "razonSocial": "Margarita seas",
+            "nit": "87465565",
+            "contacto": "",
+            "correo": ""
+          }
+        }
+      ],
+      "grupo": "A"
+    },
+    {
+      "id": "mrmc1uhz7iha",
+      "nombre": "PINTURA",
+      "grupo": "A",
+      "items": [
+        {
+          "id": "mrmc37khih0u",
+          "descripcion": "Pintura Látex Color Blanco en Muros",
+          "unidad": "m2",
+          "cantidad": "11",
+          "puDirecto": "24",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        },
+        {
+          "id": "mrqzbkjifhys",
+          "descripcion": "Pintura Latex Blanca en Muro (repintado)",
+          "unidad": "m2",
+          "cantidad": "59",
+          "puDirecto": "20",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        },
+        {
+          "id": "mrqzcsdkhnbk",
+          "descripcion": "Pintura Látex Blanca en Cielo Falso",
+          "unidad": "m2",
+          "cantidad": "12",
+          "puDirecto": "24",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 12,
+          "utilPct": 15
+        }
+      ]
+    },
+    {
+      "id": "mrqzdvxy8t5v",
+      "nombre": "DIVISIONES ",
+      "grupo": "A",
+      "items": [
+        {
+          "id": "mrqze5f72mxp",
+          "descripcion": "Divisoria de Aluminio y Vidrio Laminado 4+4mm VASA  c/Puerta de Vidrio  (Medidas: 3,00m) h = cielo falso (Oficina Gerentes)",
+          "unidad": "pza",
+          "cantidad": "1",
+          "puDirecto": "13105",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        },
+        {
+          "id": "mrqzg6dlobpv",
+          "descripcion": "Divisoria de Aluminio y Vidrio Laminado 4+4mm VASA  c/Puerta de Vidrio (Medidas: 3,10m) h = cielo falso (División Gerentes/Sala de Reuniones)",
+          "unidad": "pza",
+          "cantidad": "1",
+          "puDirecto": "11190",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        },
+        {
+          "id": "mrqzh9abwmxi",
+          "descripcion": "Divisoria de Aluminio y Vidrio Laminado 4+4mm VASA  c/Puerta de Vidrio  (Medidas: 4,95m) h = cielo falso (Sala de Reuniones)",
+          "unidad": "pza",
+          "cantidad": "1",
+          "puDirecto": "18840",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        },
+        {
+          "id": "mrqzih1hi5o8",
+          "descripcion": "División c/barras de Alumino (Negro) 8x4cm (Separación: 6cm) Dimensiones: 1,80m (frente)  h = cielo falso (Recepción)",
+          "unidad": "pza",
+          "cantidad": "1",
+          "puDirecto": "6400",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        }
+      ]
+    },
+    {
+      "id": "mrqzkpfrdh5w",
+      "nombre": "MOBILIARIO A MEDIDA",
+      "grupo": "A",
+      "items": [
+        {
+          "id": "mrqzl0xh7gdi",
+          "descripcion": "Mueble a medida de Archo y Coffee Point de MDP (incluye 4 puertas abatibles c/divisiones internas, mueble bajo y alto en Coffee Point. Frente: 3,70m h= cielo falso Obs: se considera espacio para frigobar y microondas.",
+          "unidad": "pza",
+          "cantidad": "1",
+          "puDirecto": "21910",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        }
+      ]
+    },
+    {
+      "id": "mrr8pq8tna8h",
+      "nombre": "MESONES",
+      "grupo": "A",
+      "items": [
+        {
+          "id": "mrr8pvfhoo1v",
+          "descripcion": "Mesón de Granito Chiquitano o Similar 1,80m (Frente) x 0,60m (Profundidad) Incluye Corte de Bacha y Griferia Obs: Mesón apoyado sobre mueble MDP, incluye zócalo y cenefa.",
+          "unidad": "glb",
+          "cantidad": "1",
+          "puDirecto": "2410",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        }
+      ]
+    },
+    {
+      "id": "mrr8qzfoyv2w",
+      "nombre": "ZÓCALOS",
+      "grupo": "A",
+      "items": [
+        {
+          "id": "mrr8r4xvofb2",
+          "descripcion": "Provisión y Colocado de Zócalos (simil existente entregado por Green Tower) de Melamínico h=8cm",
+          "unidad": "ml",
+          "cantidad": "8",
+          "puDirecto": "70",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        }
+      ]
+    },
+    {
+      "id": "mrr8s5mcx08s",
+      "nombre": "ARTEFACTOS",
+      "grupo": "A",
+      "items": [
+        {
+          "id": "mrr8sjquj9us",
+          "descripcion": "Provisión de Bacha de Lavaplatos Simple Inox o Similar",
+          "unidad": "pza",
+          "cantidad": "1",
+          "puDirecto": "580",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        },
+        {
+          "id": "mrr8tv2w5bsd",
+          "descripcion": "Provisión de Grifo Inox Simple",
+          "unidad": "pza",
+          "cantidad": "1qq",
+          "puDirecto": "550",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        }
+      ]
+    },
+    {
+      "id": "mrr8uybjso2e",
+      "nombre": "CORTINAS",
+      "grupo": "A",
+      "items": [
+        {
+          "id": "mrr8v79cyph0",
+          "descripcion": "Cortinas Roller Screen Manual (Screen 1%) h = piso a techo",
+          "unidad": "m2",
+          "cantidad": "25",
+          "puDirecto": "161",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        }
+      ]
+    },
+    {
+      "id": "mrr8wrg07d2c",
+      "nombre": "ADHESIVOS ESMERILADOS",
+      "grupo": "A",
+      "items": [
+        {
+          "id": "mrr8xl65g8xm",
+          "descripcion": "Adhesivo Esmerilado (Franja de 10 + 40 + 10cm) Sin impresión o Troquelado",
+          "unidad": "m2",
+          "cantidad": "13",
+          "puDirecto": "60",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        }
+      ]
+    },
+    {
+      "id": "mrr8ym69pldf",
+      "nombre": "LIMPIEZA DE OBRA",
+      "grupo": "A",
+      "items": [
+        {
+          "id": "mrr8yrmv1ryu",
+          "descripcion": "Limpieza General de Obra (Incluye Previo Desempolvado para Ingreso de Muebles y Alfombra)",
+          "unidad": "m2",
+          "cantidad": "68",
+          "puDirecto": "15",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        },
+        {
+          "id": "mrr8znk3n9ju",
+          "descripcion": "Retiro de Escombros y basura",
+          "unidad": "viajes",
+          "cantidad": "1",
+          "puDirecto": "350",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        }
+      ]
+    },
+    {
+      "id": "mrtp7qmtz11w",
+      "nombre": "INSTALACIÓN HIDROSANITARIA",
+      "grupo": "B",
+      "items": [
+        {
+          "id": "mrtp7y20gjbu",
+          "descripcion": "Colocado de Griferia para Lavaplatos",
+          "unidad": "pza",
+          "cantidad": "1",
+          "puDirecto": "180",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        },
+        {
+          "id": "mrtp8gpauzbj",
+          "descripcion": "Conexión a Instalación Hidráulica Existente ",
+          "unidad": "pto",
+          "cantidad": "3",
+          "puDirecto": "110",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        },
+        {
+          "id": "mrtp91bjikb2",
+          "descripcion": "Conexión a Instalación Sanitaria Existente ",
+          "unidad": "pto",
+          "cantidad": "3",
+          "puDirecto": "260",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        },
+        {
+          "id": "mrtp9ps9x6s2",
+          "descripcion": "Conexión de Lavaplatos",
+          "unidad": "pza",
+          "cantidad": "1",
+          "puDirecto": "220",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        }
+      ]
+    },
+    {
+      "id": "mrtpabnm6en5",
+      "nombre": "INSTALACIÓN ELÉCTRICA",
+      "grupo": "B",
+      "items": [
+        {
+          "id": "mrtpaky4noij",
+          "descripcion": "Traslado de Punto de Iluminación Normal",
+          "unidad": "pto",
+          "cantidad": "6",
+          "puDirecto": "150",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        },
+        {
+          "id": "mrtpb2jrylou",
+          "descripcion": "Provisión e Instalación Punto de Tomacorrientes en Muro (Coffee Point / Sala de Reuniones)",
+          "unidad": "pto",
+          "cantidad": "4",
+          "puDirecto": "290",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        },
+        {
+          "id": "mrtpbj17vsan",
+          "descripcion": "Provisión e Instalación Punto de Tomacorriente en Estación de Trabajo o Mesa de Reuniones  (incluye Placa de Interruptor c/caja sobrespuesta por debajo de Estación de Trabajo) - Mesa de Reuniones x2, Gerencia x2, Cowork x1, Tv (Sala de Reuniones) x2, Cocineta x3 (Frigobar, Sobre Mesada y Microondas)",
+          "unidad": "pto",
+          "cantidad": "10",
+          "puDirecto": "170",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        },
+        {
+          "id": "mrtpctsih2kg",
+          "descripcion": "Instalación de Luminarias ",
+          "unidad": "pto",
+          "cantidad": "9",
+          "puDirecto": "70",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        },
+        {
+          "id": "mrtpdaflccgb",
+          "descripcion": "Instalación de Placas Eléctricas Interruptores y Tomacorrientes",
+          "unidad": "pza",
+          "cantidad": "14",
+          "puDirecto": "30",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        }
+      ]
+    },
+    {
+      "id": "mrtpesuvj74t",
+      "nombre": "INTALACIÓN DETECCIÓN DE INCENDIOS",
+      "grupo": "B",
+      "items": [
+        {
+          "id": "mrtpfchd04vj",
+          "descripcion": "Detector Photo",
+          "unidad": "pto",
+          "cantidad": "2",
+          "puDirecto": "1400",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        },
+        {
+          "id": "mrtpg2y7dop4",
+          "descripcion": "Base de Detector",
+          "unidad": "pto",
+          "cantidad": "2",
+          "puDirecto": "500",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        },
+        {
+          "id": "mrtpgi325ymy",
+          "descripcion": "Cable 2x18",
+          "unidad": "mts",
+          "cantidad": "8",
+          "puDirecto": "15",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        },
+        {
+          "id": "mrtph1gzvczu",
+          "descripcion": "Cajas octogonales, tapas para cajas octogonzales, Flexible Liquid Ttight 1/2``, Conectores para Flexible Liquid Tight 1/2``, Tarigos Nro. 6 con Tornillos, Abrazadaderas de 1/2``",
+          "unidad": "glb",
+          "cantidad": "1",
+          "puDirecto": "1000",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        },
+        {
+          "id": "mrtphjb5awky",
+          "descripcion": "Instalación de 2 detectores Configuración Panel",
+          "unidad": "pto",
+          "cantidad": "2",
+          "puDirecto": "1185",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        }
+      ]
+    },
+    {
+      "id": "mrtpjkop4i9d",
+      "nombre": "HDMI",
+      "grupo": "B",
+      "items": [
+        {
+          "id": "mrtpjq072n85",
+          "descripcion": "HDMI Cableado y Ducteado para Sala de Reuniones",
+          "unidad": "pto",
+          "cantidad": "1",
+          "puDirecto": "1185",
+          "puMoneda": "Bs",
+          "puTC": "",
+          "ggPct": 10,
+          "utilPct": 15
+        }
+      ]
+    }
+  ],
+  "contractors": {
+    "5454564545": {
+      "hitos": [
+        {
+          "id": "mr254nfow99y",
+          "nombre": "Anticipo",
+          "pct": 50,
+          "pagado": true,
+          "fecha": "",
+          "montoPagado": ""
+        },
+        {
+          "id": "mr255cek4dlf",
+          "nombre": "Avance ",
+          "pct": 20,
+          "pagado": false,
+          "fecha": "",
+          "montoPagado": ""
+        },
+        {
+          "id": "mr255jgk6im1",
+          "nombre": "Saldo",
+          "pct": 30,
+          "pagado": false,
+          "fecha": "",
+          "montoPagado": ""
+        }
+      ],
+      "adicionales": []
+    },
+    "ALVARO MORENO": {
+      "hitos": [
+        {
+          "id": "mr286b1wc0f9",
+          "nombre": "Anticipo",
+          "pct": 50,
+          "pagado": false,
+          "fecha": "",
+          "montoPagado": ""
+        },
+        {
+          "id": "mr286b1w7zav",
+          "nombre": "Avance 1",
+          "pct": 30,
+          "pagado": false,
+          "fecha": "",
+          "montoPagado": ""
+        },
+        {
+          "id": "mr286b1w2rx5",
+          "nombre": "Saldo",
+          "pct": 20,
+          "pagado": false,
+          "fecha": "",
+          "montoPagado": ""
+        }
+      ],
+      "adicionales": [
+        {
+          "id": "mr286lro2rty",
+          "descripcion": "Instalación de TVs.",
+          "monto": "500",
+          "pagado": false,
+          "fecha": "",
+          "montoPagado": "",
+          "cantidad": "5",
+          "pu": "120"
+        }
+      ],
+      "plazo": "20 dias calendario",
+      "fechaAdj": "2026-07-02"
+    }
+  },
+  "cobros": [],
+  "informe": {
+    "num": "1",
+    "codigoIT": "IT_001_26",
+    "fecha": "5/7/2026",
+    "periodo": "",
+    "plazoDias": "",
+    "fechaInicio": "",
+    "fechaFin": "",
+    "obs": "",
+    "prox": "",
+    "incluirFotos": true,
+    "fotos": [],
+    "avances": {
+      "mr253w3lpn7x": "100",
+      "mr253w3l8yo3": "50",
+      "mrmc1uhz7iha": "0",
+      "mrqzdvxy8t5v": "30",
+      "mrqzkpfrdh5w": "20",
+      "mrr8pq8tna8h": "20",
+      "mrr8qzfoyv2w": "0",
+      "mrr8s5mcx08s": "0",
+      "mrr8uybjso2e": "50",
+      "mrr8wrg07d2c": "0",
+      "mrr8ym69pldf": "0",
+      "mrtp7qmtz11w": "50",
+      "mrtpabnm6en5": "60",
+      "mrtpesuvj74t": "50",
+      "mrtpjkop4i9d": "50"
+    }
+  },
+  "versions": []
+}

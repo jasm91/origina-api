@@ -4,6 +4,12 @@ Formato: cada fase o cambio relevante bumpea la versión en `package.json` **y**
 `client/package.json` (esta última es la que se ve en la barra lateral vía `__APP_VERSION__`).
 Se sube la **minor** por fase/feature; **patch** para arreglos; **major** para rupturas.
 
+## 3.6.0 — Importador de datos del cotizador
+- Semilla idempotente e incremental desde `cotizador/seed/*.json` hacia `og_kv`
+  (`migrate.js → ensureCotizadorSeed`): soporta export completo (`__originaBase`) y
+  cotizaciones sueltas (`.ogq.json`). Marca por archivo/tenant para no reimportar.
+- Cotización SONY CHILE precargada como semilla inicial.
+
 ## 3.5.0 — Rediseño visual al estándar de producción
 - Sistema de diseño alineado al front de producción: tipografía Jost (títulos),
   Inter (cuerpo), JetBrains Mono (números); acento verde + clay.

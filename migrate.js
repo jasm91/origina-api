@@ -12,6 +12,8 @@
  * Cotizador OG: og_kv (almacén clave→valor JSON del cotizador de producción del cliente).
  */
 require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
 const db = require('./db');
 const bcrypt = require('bcryptjs');
 
@@ -161,7 +163,84 @@ async function run() {
 
   await seedIfEmpty();
   await ensureCatalogoBaseline();
+  await ensureCotizadorSeed();
   console.log('✓ Migración completa.');
+}
+
+/**
+ * Carga datos del COTIZADOR desde archivos en `cotizador/seed/` hacia og_kv.
+ * Soporta dos formatos por archivo:
+ *   · Export completo (`__originaBase:true`): mapea a las claves de almacenamiento.
+ *   · Cotización suelta (`__og:"quote"`): la agrega a quotes_index + quote_<id>.
+ * Es idempotente e INCREMENTAL: por cada tenant guarda en og_kv la lista de archivos
+ * ya aplicados (`__seed_files`), así podés dejar caer un nuevo export y se aplica solo
+ * ese en el próximo arranque, sin re-importar lo anterior ni duplicar.
+ */
+async function ensureCotizadorSeed() {
+  const dir = path.join(__dirname, 'cotizador', 'seed');
+  let files = [];
+  try { files = fs.readdirSync(dir).filter((f) => f.toLowerCase().endsWith('.json')).sort(); }
+  catch { return; } // sin carpeta/archivos → nada que sembrar
+  if (!files.length) return;
+
+  const tenants = (await db.query('SELECT id FROM tenants')).rows;
+  for (const { id: T } of tenants) {
+    const applied = new Set((await kvGet(T, '__seed_files')) || []);
+    for (const file of files) {
+      if (applied.has(file)) continue;
+      let data;
+      try { data = JSON.parse(fs.readFileSync(path.join(dir, file), 'utf8')); }
+      catch (e) { console.warn(`[cotizador-seed] ${file} inválido, salteado:`, e.message); continue; }
+
+      if (data && data.__originaBase) {
+        await applyBaseExport(T, data);
+        console.log(`[cotizador-seed] tenant ${T}: base «${file}» aplicada (${(data.quotesIndex || []).length} cotizaciones)`);
+      } else if (data && data.__og === 'quote' && data.meta) {
+        await applySingleQuote(T, data, file);
+        console.log(`[cotizador-seed] tenant ${T}: cotización «${data.meta.codigo || file}» cargada`);
+      } else {
+        console.warn(`[cotizador-seed] ${file}: formato no reconocido, salteado`);
+        continue;
+      }
+      applied.add(file);
+      await kvSet(T, '__seed_files', [...applied]);
+    }
+  }
+}
+
+// Mapea un export completo del cotizador a las claves de og_kv.
+async function applyBaseExport(T, b) {
+  const setIf = async (key, val) => { if (val !== undefined) await kvSet(T, key, val); };
+  await setIf('quotes_index', b.quotesIndex || []);
+  for (const [id, doc] of Object.entries(b.quotes || {})) await kvSet(T, 'quote_' + id, doc);
+  await setIf('lib_costs', b.libCosts);
+  await setIf('lib_contractors', b.libCts);
+  await setIf('lib_ordenes', b.libOrdenes);
+  await setIf('og_correlativo', b.correlativo);
+  await setIf('og_users', b.users);
+}
+
+// Agrega una cotización suelta (.ogq.json) al índice + su documento.
+async function applySingleQuote(T, q, file) {
+  const id = (q.meta && q.meta.codigo ? String(q.meta.codigo) : file).replace(/[^A-Za-z0-9_-]/g, '_').slice(0, 60) || ('q_' + Date.now());
+  await kvSet(T, 'quote_' + id, q);
+  const idx = (await kvGet(T, 'quotes_index')) || [];
+  if (!idx.some((r) => r.id === id)) {
+    idx.push({ id, codigo: q.meta.codigo || id, proyecto: q.meta.proyecto || '', cliente: q.meta.cliente || '',
+      estado: q.meta.estado || 'Cotizada', servicio: q.meta.servicio || 'obra', fecha: q.meta.fecha || '', savedAt: Date.now() });
+    await kvSet(T, 'quotes_index', idx);
+  }
+}
+
+async function kvGet(T, key) {
+  const { rows } = await db.query('SELECT value FROM og_kv WHERE tenant_id=$1 AND key=$2', [T, key]);
+  return rows.length ? rows[0].value : null;
+}
+async function kvSet(T, key, value) {
+  await db.query(
+    `INSERT INTO og_kv(tenant_id,key,value,updated_at) VALUES($1,$2,$3::jsonb,NOW())
+     ON CONFLICT (tenant_id,key) DO UPDATE SET value=EXCLUDED.value, updated_at=NOW()`,
+    [T, key, JSON.stringify(value)]);
 }
 
 async function seedIfEmpty() {
