@@ -16,6 +16,7 @@ const catalogoRouter = require('./catalogo');
 const presupuestoRouter = require('./presupuesto');
 const movimientosRouter = require('./movimientos');
 const comprasRouter = require('./compras');
+const ogStoreRouter = require('./og_store');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -32,7 +33,13 @@ app.use('/api', catalogoRouter);
 app.use('/api', presupuestoRouter);
 app.use('/api', movimientosRouter);
 app.use('/api', comprasRouter);
+app.use('/api', ogStoreRouter);
 app.use('/api', apiRouter);
+
+// Cotizador de producción de Origina (app React autocontenida servida como estático).
+const cotizadorDir = path.join(__dirname, 'cotizador');
+app.use('/cotizador', express.static(cotizadorDir, { index: false }));
+app.get('/cotizador', (_req, res) => res.sendFile(path.join(cotizadorDir, 'index.html')));
 
 // Frontend (React build en client/dist).
 const dist = path.join(__dirname, 'client', 'dist');

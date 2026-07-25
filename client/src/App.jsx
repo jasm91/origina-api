@@ -55,6 +55,10 @@ function Layout({ children }) {
               {g.links.map((l) => <NavLink key={l.to} to={l.to} end={l.to === '/'}>{l.label}</NavLink>)}
             </div>
           ))}
+          <div>
+            <div className="navgroup-title">Cotizaciones</div>
+            <a href="/cotizador">Cotizador</a>
+          </div>
         </nav>
         <div className="foot">
           <span>{user?.name} · {user?.role}</span>

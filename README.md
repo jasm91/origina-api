@@ -49,6 +49,8 @@ catalogo.js   catálogos: insumos + partidas con APU (pu_costo calculado) + cap�
 presupuesto.js presupuesto por selección + explosión de insumos (Fase 2)
 movimientos.js libro append-only + tablero de costo y caja (Fase 3)
 compras.js    órdenes de compra (compromisos) + control por partida (Fase 4)
+og_store.js   backend clave→valor del Cotizador de producción (POST /api/og)
+cotizador/    app React autocontenida del cliente (bundle) + host que inyecta el JWT
 client/       React + Vite (pages: Login, Dashboard, Obras, ObraDetalle, Insumos, Partidas+APU)
 ```
 

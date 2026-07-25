@@ -1,0 +1,18 @@
+{
+  "name": "cotizador-origina",
+  "version": "1.0.0",
+  "description": "Cotizador de Obra ORIGINA — componente React de un solo archivo.",
+  "private": true,
+  "scripts": {
+    "build": "esbuild entry.jsx --bundle --minify --format=iife --jsx=automatic --loader:.jsx=jsx --outfile=app.bundle.js",
+    "watch": "esbuild entry.jsx --bundle --format=iife --jsx=automatic --loader:.jsx=jsx --outfile=app.bundle.js --watch"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "lucide-react": "0.383.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.21.0"
+  }
+}

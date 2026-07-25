@@ -9,6 +9,7 @@
  * Fase 2: presupuesto_items (presupuesto por selección + explosión de insumos).
  * Fase 3: movimientos (libro append-only: pipeline de costo y de caja).
  * Fase 4: ordenes_compra + orden_compra_lineas (compromisos formales) y control por partida.
+ * Cotizador OG: og_kv (almacén clave→valor JSON del cotizador de producción del cliente).
  */
 require('dotenv').config();
 const db = require('./db');
@@ -149,6 +150,14 @@ async function run() {
   // Enlace opcional del libro con la OC que lo originó (compromiso o pago).
   await db.query(`ALTER TABLE movimientos ADD COLUMN IF NOT EXISTS orden_id INTEGER
     REFERENCES ordenes_compra(id) ON DELETE SET NULL;`);
+
+  // Cotizador OG: almacén clave→valor JSON, aislado por tenant (multiusuario).
+  await db.query(`CREATE TABLE IF NOT EXISTS og_kv (
+    tenant_id INTEGER NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    key TEXT NOT NULL,
+    value JSONB,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (tenant_id, key));`);
 
   await seedIfEmpty();
   await ensureCatalogoBaseline();
