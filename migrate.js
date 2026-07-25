@@ -8,6 +8,7 @@
  * Fase 1: capitulos_estandar, insumos, partidas_catalogo, apu_lineas.
  * Fase 2: presupuesto_items (presupuesto por selección + explosión de insumos).
  * Fase 3: movimientos (libro append-only: pipeline de costo y de caja).
+ * Fase 4: ordenes_compra + orden_compra_lineas (compromisos formales) y control por partida.
  */
 require('dotenv').config();
 const db = require('./db');
@@ -116,6 +117,38 @@ async function run() {
          OR (flujo='ingreso' AND etapa IN ('contratado','facturado','cobrado')) ));`);
   await db.query(`CREATE INDEX IF NOT EXISTS idx_mov_obra ON movimientos(obra_id);`);
   await db.query(`CREATE INDEX IF NOT EXISTS idx_mov_obra_flujo ON movimientos(obra_id, flujo, etapa);`);
+
+  // Fase 4: órdenes de compra (compromisos formales) y sus líneas.
+  await db.query(`CREATE TABLE IF NOT EXISTS ordenes_compra (
+    id SERIAL PRIMARY KEY,
+    tenant_id INTEGER NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    obra_id INTEGER NOT NULL REFERENCES obras(id) ON DELETE CASCADE,
+    numero INTEGER NOT NULL,
+    proveedor TEXT NOT NULL,
+    fecha DATE NOT NULL DEFAULT CURRENT_DATE,
+    estado TEXT NOT NULL DEFAULT 'borrador' CHECK (estado IN ('borrador','emitida','anulada')),
+    notas TEXT,
+    created_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (tenant_id, numero));`);
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_oc_obra ON ordenes_compra(obra_id);`);
+
+  await db.query(`CREATE TABLE IF NOT EXISTS orden_compra_lineas (
+    id SERIAL PRIMARY KEY,
+    tenant_id INTEGER NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    orden_id INTEGER NOT NULL REFERENCES ordenes_compra(id) ON DELETE CASCADE,
+    partida_id INTEGER REFERENCES partidas_catalogo(id) ON DELETE SET NULL,
+    insumo_id INTEGER REFERENCES insumos(id) ON DELETE SET NULL,
+    descripcion TEXT NOT NULL,
+    cantidad NUMERIC(14,4) NOT NULL DEFAULT 0,
+    precio_unit NUMERIC(14,4) NOT NULL DEFAULT 0,
+    orden INTEGER NOT NULL DEFAULT 0);`);
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_ocl_orden ON orden_compra_lineas(orden_id);`);
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_ocl_partida ON orden_compra_lineas(partida_id);`);
+
+  // Enlace opcional del libro con la OC que lo originó (compromiso o pago).
+  await db.query(`ALTER TABLE movimientos ADD COLUMN IF NOT EXISTS orden_id INTEGER
+    REFERENCES ordenes_compra(id) ON DELETE SET NULL;`);
 
   await seedIfEmpty();
   await ensureCatalogoBaseline();

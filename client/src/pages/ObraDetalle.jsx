@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { api, fmt, fdate, getUser } from '../api';
+import { api, fmt, fdate, animateClose, getUser } from '../api';
 
 const tipoLabel = { material: 'Material', mano_obra: 'Mano de obra', equipo: 'Equipo', subcontrato: 'Subcontrato' };
 const etapaLabel = { comprometido: 'Comprometido', real: 'Pago real', contratado: 'Contratado', facturado: 'Facturado', cobrado: 'Cobrado' };
@@ -17,6 +17,9 @@ export default function ObraDetalle() {
   const [tablero, setTablero] = useState(null);
   const [movs, setMovs] = useState([]);
   const [nm, setNm] = useState({ flujo: 'egreso', etapa: 'comprometido', monto: '', concepto: '', contraparte: '', doc_ref: '', fecha: '' });
+  const [ordenes, setOrdenes] = useState([]);
+  const [control, setControl] = useState(null);
+  const [ocModal, setOcModal] = useState(null);   // { proveedor, notas, lineas:[...] }
   const [err, setErr] = useState('');
   const role = getUser()?.role;
   const canWrite = ['admin', 'aprobador', 'administrativo'].includes(role);
@@ -28,8 +31,16 @@ export default function ObraDetalle() {
     api(`/obras/${id}/tablero`).then(setTablero).catch((e) => setErr(e.message));
     api(`/obras/${id}/movimientos`).then((r) => setMovs(r.rows)).catch((e) => setErr(e.message));
   };
+  const loadCompras = () => {
+    api(`/obras/${id}/ordenes`).then((r) => setOrdenes(r.rows)).catch((e) => setErr(e.message));
+    api(`/obras/${id}/control`).then(setControl).catch((e) => setErr(e.message));
+  };
   useEffect(() => { loadPres(); api('/partidas?limit=200').then((r) => setPartidas(r.rows)).catch(() => {}); }, [id]);
-  useEffect(() => { if (tab === 'insumos') loadExpl(); if (tab === 'dinero') loadDinero(); }, [tab, id]);
+  useEffect(() => {
+    if (tab === 'insumos') loadExpl();
+    if (tab === 'dinero') loadDinero();
+    if (tab === 'compras') loadCompras();
+  }, [tab, id]);
 
   const addMov = async () => {
     if (!nm.concepto.trim() || !Number(nm.monto)) { setErr('Concepto y monto son obligatorios.'); return; }
@@ -44,6 +55,33 @@ export default function ObraDetalle() {
   };
   const delMov = async (m) => { try { await api(`/movimientos/${m.id}`, { method: 'DELETE' }); loadDinero(); } catch (e) { setErr(e.message); } };
   const setFlujo = (flujo) => setNm({ ...nm, flujo, etapa: ETAPAS_POR_FLUJO[flujo][0] });
+
+  // ── Órdenes de compra ──
+  const nuevaOC = () => setOcModal({ proveedor: '', notas: '', lineas: [{ descripcion: '', partida_id: '', cantidad: '', precio_unit: '' }] });
+  const ocLineChange = (i, k, v) => setOcModal((m) => ({ ...m, lineas: m.lineas.map((l, j) => (j === i ? { ...l, [k]: v } : l)) }));
+  const ocAddLine = () => setOcModal((m) => ({ ...m, lineas: [...m.lineas, { descripcion: '', partida_id: '', cantidad: '', precio_unit: '' }] }));
+  const ocDelLine = (i) => setOcModal((m) => ({ ...m, lineas: m.lineas.filter((_, j) => j !== i) }));
+  const ocTotalModal = () => (ocModal?.lineas || []).reduce((s, l) => s + (Number(l.cantidad) || 0) * (Number(l.precio_unit) || 0), 0);
+  const saveOC = async () => {
+    if (!ocModal.proveedor.trim()) { setErr('Proveedor requerido.'); return; }
+    setErr('');
+    const lineas = ocModal.lineas
+      .filter((l) => l.descripcion.trim())
+      .map((l) => ({ descripcion: l.descripcion.trim(), partida_id: l.partida_id || null, cantidad: Number(l.cantidad) || 0, precio_unit: Number(l.precio_unit) || 0 }));
+    try {
+      await api(`/obras/${id}/ordenes`, { method: 'POST', body: { proveedor: ocModal.proveedor.trim(), notas: ocModal.notas.trim() || null, lineas } });
+      animateClose(setOcModal); loadCompras();
+    } catch (e) { setErr(e.message); }
+  };
+  const emitirOC = async (o) => { setErr(''); try { await api(`/ordenes/${o.id}/emitir`, { method: 'POST' }); loadCompras(); } catch (e) { setErr(e.message); } };
+  const anularOC = async (o) => { setErr(''); try { await api(`/ordenes/${o.id}/anular`, { method: 'POST' }); loadCompras(); } catch (e) { setErr(e.message); } };
+  const pagarOC = async (o) => {
+    const v = window.prompt(`Pago para OC-${o.numero} (${o.proveedor}). Monto en Bs:`);
+    if (v == null) return;
+    setErr('');
+    try { await api(`/ordenes/${o.id}/pago`, { method: 'POST', body: { monto: Number(v) || 0 } }); loadCompras(); }
+    catch (e) { setErr(e.message); }
+  };
 
   const add = async () => {
     if (!nl.partida_id) return;
@@ -83,6 +121,7 @@ export default function ObraDetalle() {
       <div className="tabs">
         <button className={tab === 'presupuesto' ? 'active' : ''} onClick={() => setTab('presupuesto')}>Presupuesto</button>
         <button className={tab === 'insumos' ? 'active' : ''} onClick={() => setTab('insumos')}>Explosión de insumos</button>
+        <button className={tab === 'compras' ? 'active' : ''} onClick={() => setTab('compras')}>Compras</button>
         <button className={tab === 'dinero' ? 'active' : ''} onClick={() => setTab('dinero')}>Dinero</button>
       </div>
       {err && <div className="error">{err}</div>}
@@ -158,6 +197,64 @@ export default function ObraDetalle() {
         </div>
       )}
 
+      {tab === 'compras' && (
+        <div style={{ marginTop: 14 }}>
+          {/* Control por partida */}
+          <div className="navgroup-title" style={{ paddingLeft: 2 }}>Control por partida · Presupuestado vs Comprometido</div>
+          {control && (
+            <>
+              <table style={{ margin: '8px 0 6px' }}>
+                <thead><tr><th>Partida</th><th>Capítulo</th><th className="right">Presupuestado</th><th className="right">Comprometido</th><th className="right">Saldo</th><th className="right">Avance</th></tr></thead>
+                <tbody>
+                  {control.rows.map((r) => (
+                    <tr key={r.partida_id}>
+                      <td><span className="num">{r.codigo}</span> · {r.descripcion}</td>
+                      <td className="mut">{r.capitulo || '—'}</td>
+                      <td className="right num">{fmt(r.presupuestado)}</td>
+                      <td className="right num">{fmt(r.comprometido)}</td>
+                      <td className="right num" style={{ color: r.saldo < 0 ? 'var(--red)' : 'var(--ink)' }}>{fmt(r.saldo)}</td>
+                      <td className="right num" style={{ color: r.avance > 1 ? 'var(--red)' : 'var(--ink-soft)' }}>{(r.avance * 100).toFixed(0)}%</td>
+                    </tr>
+                  ))}
+                  {!control.rows.length && <tr><td colSpan={6} className="mut" style={{ padding: 16 }}>Sin partidas en el presupuesto todavía.</td></tr>}
+                </tbody>
+              </table>
+              <div className="mut" style={{ fontSize: 13, marginBottom: 4 }}>
+                Presupuestado {fmt(control.totales.presupuestado)} · Comprometido {fmt(control.totales.comprometido_total)}
+                {control.sin_partida > 0 && <> (incluye {fmt(control.sin_partida)} sin partida asignada)</>}
+              </div>
+            </>
+          )}
+
+          {/* Órdenes de compra */}
+          <div className="toolbar" style={{ marginTop: 16 }}>
+            <div className="navgroup-title" style={{ padding: 0 }}>Órdenes de compra</div>
+            {canWrite && <button className="btn" style={{ marginLeft: 'auto' }} onClick={nuevaOC}>+ Nueva OC</button>}
+          </div>
+          <table>
+            <thead><tr><th>OC</th><th>Proveedor</th><th>Fecha</th><th>Estado</th><th className="right">Total</th><th className="right">Pagado</th><th></th></tr></thead>
+            <tbody>
+              {ordenes.map((o) => (
+                <tr key={o.id}>
+                  <td className="num">OC-{o.numero}</td>
+                  <td>{o.proveedor}</td>
+                  <td className="num">{fdate(o.fecha)}</td>
+                  <td><span className={`pill ${o.estado === 'emitida' ? 'green' : 'mut'}`}>{o.estado}</span></td>
+                  <td className="right num">{fmt(o.total)}</td>
+                  <td className="right num">{fmt(o.pagado)}</td>
+                  <td className="right" style={{ whiteSpace: 'nowrap' }}>
+                    {canApprove && o.estado === 'borrador' && <button className="btn" style={{ padding: '4px 10px' }} onClick={() => emitirOC(o)}>Emitir</button>}
+                    {canApprove && o.estado === 'emitida' && <button className="btn secondary" style={{ padding: '4px 10px', marginRight: 6 }} onClick={() => pagarOC(o)}>Pago</button>}
+                    {canApprove && o.estado !== 'anulada' && <button className="btn secondary" style={{ padding: '4px 10px' }} onClick={() => anularOC(o)}>Anular</button>}
+                  </td>
+                </tr>
+              ))}
+              {!ordenes.length && <tr><td colSpan={7} className="mut" style={{ padding: 16 }}>Sin órdenes de compra. Creá la primera con «+ Nueva OC».</td></tr>}
+            </tbody>
+          </table>
+        </div>
+      )}
+
       {tab === 'dinero' && tablero && (
         <div style={{ marginTop: 14 }}>
           {/* Pipeline de COSTO */}
@@ -226,6 +323,50 @@ export default function ObraDetalle() {
               {!movs.length && <tr><td colSpan={canApprove ? 8 : 7} className="mut" style={{ padding: 16 }}>Sin movimientos. Registrá el primer compromiso o cobro con el formulario de arriba.</td></tr>}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {ocModal && (
+        <div className="modal-bg" onClick={() => animateClose(setOcModal)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()} style={{ width: 720, maxWidth: '96vw' }}>
+            <h2>Nueva orden de compra</h2>
+            <div className="row">
+              <input placeholder="Proveedor" value={ocModal.proveedor} onChange={(e) => setOcModal({ ...ocModal, proveedor: e.target.value })} />
+              <input placeholder="Notas (opcional)" value={ocModal.notas} onChange={(e) => setOcModal({ ...ocModal, notas: e.target.value })} />
+            </div>
+
+            <div className="navgroup-title" style={{ padding: '8px 0 2px' }}>Líneas</div>
+            <table>
+              <thead><tr><th>Descripción</th><th>Partida</th><th className="right">Cant.</th><th className="right">P. unit.</th><th className="right">Subtotal</th><th></th></tr></thead>
+              <tbody>
+                {ocModal.lineas.map((l, i) => (
+                  <tr key={i}>
+                    <td><input placeholder="Descripción" value={l.descripcion} onChange={(e) => ocLineChange(i, 'descripcion', e.target.value)} style={{ width: '100%' }} /></td>
+                    <td>
+                      <select value={l.partida_id} onChange={(e) => ocLineChange(i, 'partida_id', e.target.value)} style={{ maxWidth: 150 }}>
+                        <option value="">— (sin partida)</option>
+                        {partidas.map((p) => <option key={p.id} value={p.id}>{p.codigo}</option>)}
+                      </select>
+                    </td>
+                    <td><input type="number" value={l.cantidad} onChange={(e) => ocLineChange(i, 'cantidad', e.target.value)} style={{ width: 80, textAlign: 'right' }} /></td>
+                    <td><input type="number" value={l.precio_unit} onChange={(e) => ocLineChange(i, 'precio_unit', e.target.value)} style={{ width: 90, textAlign: 'right' }} /></td>
+                    <td className="right num">{fmt((Number(l.cantidad) || 0) * (Number(l.precio_unit) || 0))}</td>
+                    <td className="right"><button className="btn secondary" style={{ padding: '4px 8px' }} onClick={() => ocDelLine(i)}>✕</button></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="flx" style={{ justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
+              <button className="btn secondary" style={{ padding: '5px 12px' }} onClick={ocAddLine}>+ Línea</button>
+              <div style={{ fontSize: 16 }}>Total: <b className="num">{fmt(ocTotalModal())}</b></div>
+            </div>
+
+            {err && <div className="error">{err}</div>}
+            <div className="row" style={{ marginTop: 6 }}>
+              <button className="btn secondary" onClick={() => animateClose(setOcModal)}>Cerrar</button>
+              <button className="btn" onClick={saveOC}>Guardar borrador</button>
+            </div>
+          </div>
         </div>
       )}
     </>

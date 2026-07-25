@@ -15,6 +15,7 @@ const apiRouter = require('./api');
 const catalogoRouter = require('./catalogo');
 const presupuestoRouter = require('./presupuesto');
 const movimientosRouter = require('./movimientos');
+const comprasRouter = require('./compras');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -30,6 +31,7 @@ app.use('/api/auth', authRouter);
 app.use('/api', catalogoRouter);
 app.use('/api', presupuestoRouter);
 app.use('/api', movimientosRouter);
+app.use('/api', comprasRouter);
 app.use('/api', apiRouter);
 
 // Frontend (React build en client/dist).

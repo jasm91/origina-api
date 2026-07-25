@@ -48,6 +48,7 @@ api.js        negocio: /context + /obras (paginado, CRUD)
 catalogo.js   catálogos: insumos + partidas con APU (pu_costo calculado) + capítulos
 presupuesto.js presupuesto por selección + explosión de insumos (Fase 2)
 movimientos.js libro append-only + tablero de costo y caja (Fase 3)
+compras.js    órdenes de compra (compromisos) + control por partida (Fase 4)
 client/       React + Vite (pages: Login, Dashboard, Obras, ObraDetalle, Insumos, Partidas+APU)
 ```
 
@@ -59,7 +60,7 @@ client/       React + Vite (pages: Login, Dashboard, Obras, ObraDetalle, Insumos
 - **Fase 2 · Presupuesto:** armar por selección del catálogo + metrado + explosión de insumos. ✅
 - **Fase 3 · Dinero claro:** libro de movimientos (ledger) + pipeline (Presupuesto→Comprometido→
   Real, y Contratado→Facturado→Cobrado) + tablero de costo y caja. ✅
-- **Fase 4 · Compras y control:** órdenes de compra (compromisos) + avance real vs presupuesto.
+- **Fase 4 · Compras y control:** órdenes de compra (compromisos) + avance real vs presupuesto. ✅
 - **Fase 5 · Pulido + tests** (invariantes tipo «Σ movimientos = saldo»).
 - **Fase 6 · Mobile simple** al final.
 ```
