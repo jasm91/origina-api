@@ -4,6 +4,7 @@ import { getToken, getUser, clearSession } from './api';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Obras from './pages/Obras';
+import ObraDetalle from './pages/ObraDetalle';
 import Insumos from './pages/Insumos';
 import Partidas from './pages/Partidas';
 
@@ -77,6 +78,7 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/" element={<Private><Dashboard /></Private>} />
       <Route path="/obras" element={<Private><Obras tipo="obra" titulo="Obras" /></Private>} />
+      <Route path="/obras/:id" element={<Private><ObraDetalle /></Private>} />
       <Route path="/proyectos" element={<Private><Obras tipo="proyecto" titulo="Proyectos" /></Private>} />
       <Route path="/partidas" element={<Private><Partidas /></Private>} />
       <Route path="/insumos" element={<Private><Insumos /></Private>} />

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api, fdate, animateClose, getUser } from '../api';
 
 const EMPTY = { nombre: '', cliente: '', ubicacion: '', estado: 'en curso' };
@@ -9,6 +10,7 @@ export default function Obras({ tipo, titulo }) {
   const [page, setPage] = useState(1);
   const [modal, setModal] = useState(null);
   const [err, setErr] = useState('');
+  const nav = useNavigate();
   const canWrite = ['admin', 'aprobador', 'administrativo'].includes(getUser()?.role);
 
   const load = () =>
@@ -40,18 +42,19 @@ export default function Obras({ tipo, titulo }) {
       {err && <div className="error">{err}</div>}
 
       <table>
-        <thead><tr><th>Nombre</th><th>Cliente</th><th>Ubicación</th><th>Estado</th><th>Creada</th></tr></thead>
+        <thead><tr><th>Nombre</th><th>Cliente</th><th>Ubicación</th><th>Estado</th><th>Creada</th>{canWrite && <th></th>}</tr></thead>
         <tbody>
           {data.rows.map((o) => (
-            <tr key={o.id} onClick={() => setModal(o)} style={{ cursor: 'pointer' }}>
+            <tr key={o.id} onClick={() => nav(`/obras/${o.id}`)} style={{ cursor: 'pointer' }}>
               <td><b>{o.nombre}</b></td>
               <td>{o.cliente || '—'}</td>
               <td>{o.ubicacion || '—'}</td>
               <td><span className="pill green">{o.estado}</span></td>
               <td className="num">{fdate(o.created_at)}</td>
+              {canWrite && <td className="right"><button className="btn secondary" style={{ padding: '4px 10px' }} onClick={(e) => { e.stopPropagation(); setModal(o); }}>Editar</button></td>}
             </tr>
           ))}
-          {!data.rows.length && <tr><td colSpan={5} className="mut" style={{ padding: 18 }}>Sin resultados.</td></tr>}
+          {!data.rows.length && <tr><td colSpan={6} className="mut" style={{ padding: 18 }}>Sin resultados.</td></tr>}
         </tbody>
       </table>
 

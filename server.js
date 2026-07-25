@@ -13,6 +13,7 @@ if (!process.env.DATABASE_URL) { console.error('FATAL: DATABASE_URL es obligator
 const { router: authRouter } = require('./auth');
 const apiRouter = require('./api');
 const catalogoRouter = require('./catalogo');
+const presupuestoRouter = require('./presupuesto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -26,6 +27,7 @@ app.get('/health', (_req, res) => res.json({ ok: true, version: APP_VERSION, ts:
 
 app.use('/api/auth', authRouter);
 app.use('/api', catalogoRouter);
+app.use('/api', presupuestoRouter);
 app.use('/api', apiRouter);
 
 // Frontend (React build en client/dist).
