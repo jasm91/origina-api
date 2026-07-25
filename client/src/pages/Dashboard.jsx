@@ -16,6 +16,8 @@ export default function Dashboard() {
           <div className="cards">
             <div className="card"><div className="k">Proyectos (diseño)</div><div className="v num">{ctx.counts.proyectos}</div></div>
             <div className="card"><div className="k">Obras (ejecución)</div><div className="v num">{ctx.counts.obras}</div></div>
+            <div className="card"><div className="k">Partidas (catálogo)</div><div className="v num">{ctx.counts.partidas ?? 0}</div></div>
+            <div className="card"><div className="k">Insumos</div><div className="v num">{ctx.counts.insumos ?? 0}</div></div>
           </div>
           <div className="card">
             <h2>Origina v3 — Fundación</h2>

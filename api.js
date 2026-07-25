@@ -21,6 +21,12 @@ router.get('/context', async (req, res) => {
          COUNT(*) FILTER (WHERE tipo='obra' AND NOT archivado)::int AS obras
        FROM obras WHERE tenant_id=$1`, [T]
     )).rows[0];
+    const cat = (await db.query(
+      `SELECT
+         (SELECT COUNT(*)::int FROM insumos WHERE tenant_id=$1) AS insumos,
+         (SELECT COUNT(*)::int FROM partidas_catalogo WHERE tenant_id=$1) AS partidas`, [T]
+    )).rows[0];
+    c.insumos = cat.insumos; c.partidas = cat.partidas;
     res.json({
       user: { id: req.auth.user_id, name: req.auth.name, role: req.auth.role },
       perms: ROLE_PERMS[req.auth.role] || [],

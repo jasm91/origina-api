@@ -4,6 +4,8 @@ import { getToken, getUser, clearSession } from './api';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Obras from './pages/Obras';
+import Insumos from './pages/Insumos';
+import Partidas from './pages/Partidas';
 
 class ErrorBoundary extends React.Component {
   constructor(p) { super(p); this.state = { error: null }; }
@@ -28,6 +30,10 @@ const GROUPS = [
     { to: '/', label: 'Dashboard' },
     { to: '/obras', label: 'Obras' },
     { to: '/proyectos', label: 'Proyectos' },
+  ]},
+  { id: 'cat', title: 'Catálogo', links: [
+    { to: '/partidas', label: 'Partidas (APU)' },
+    { to: '/insumos', label: 'Insumos' },
   ]},
 ];
 
@@ -72,6 +78,8 @@ export default function App() {
       <Route path="/" element={<Private><Dashboard /></Private>} />
       <Route path="/obras" element={<Private><Obras tipo="obra" titulo="Obras" /></Private>} />
       <Route path="/proyectos" element={<Private><Obras tipo="proyecto" titulo="Proyectos" /></Private>} />
+      <Route path="/partidas" element={<Private><Partidas /></Private>} />
+      <Route path="/insumos" element={<Private><Insumos /></Private>} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

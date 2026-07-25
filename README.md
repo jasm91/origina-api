@@ -45,14 +45,15 @@ db.js         pool pg
 auth.js       login JWT multitenant, requireAuth/requireRole
 perms.js      matriz de permisos por rol (admin/aprobador/administrativo/revisor)
 api.js        negocio: /context + /obras (paginado, CRUD)
-client/       React + Vite (pages: Login, Dashboard, Obras)
+catalogo.js   catálogos: insumos + partidas con APU (pu_costo calculado) + capítulos
+client/       React + Vite (pages: Login, Dashboard, Obras, Insumos, Partidas+APU)
 ```
 
 ## Roadmap (web primero; ver PROPUESTA-Origina-v3.md)
 
 - **Fase 0 · Fundación (este repo):** auth, tenant, obras paginadas, layout rápido. ✅
 - **Fase 1 · Catálogos (APU):** insumos → partidas con receta de insumos y rendimientos →
-  plantilla de capítulos estándar. La estandarización.
+  plantilla de capítulos estándar. La estandarización. ✅
 - **Fase 2 · Presupuesto:** armar por selección del catálogo + metrado + explosión de insumos.
 - **Fase 3 · Dinero claro:** libro de movimientos (ledger) + pipeline (Presupuesto→Comprometido→
   Real, y Contratado→Facturado→Cobrado) + tablero de costo y caja.
