@@ -46,7 +46,9 @@ auth.js       login JWT multitenant, requireAuth/requireRole
 perms.js      matriz de permisos por rol (admin/aprobador/administrativo/revisor)
 api.js        negocio: /context + /obras (paginado, CRUD)
 catalogo.js   catálogos: insumos + partidas con APU (pu_costo calculado) + capítulos
-client/       React + Vite (pages: Login, Dashboard, Obras, Insumos, Partidas+APU)
+presupuesto.js presupuesto por selección + explosión de insumos (Fase 2)
+movimientos.js libro append-only + tablero de costo y caja (Fase 3)
+client/       React + Vite (pages: Login, Dashboard, Obras, ObraDetalle, Insumos, Partidas+APU)
 ```
 
 ## Roadmap (web primero; ver PROPUESTA-Origina-v3.md)
@@ -56,7 +58,7 @@ client/       React + Vite (pages: Login, Dashboard, Obras, Insumos, Partidas+AP
   plantilla de capítulos estándar. La estandarización. ✅
 - **Fase 2 · Presupuesto:** armar por selección del catálogo + metrado + explosión de insumos. ✅
 - **Fase 3 · Dinero claro:** libro de movimientos (ledger) + pipeline (Presupuesto→Comprometido→
-  Real, y Contratado→Facturado→Cobrado) + tablero de costo y caja.
+  Real, y Contratado→Facturado→Cobrado) + tablero de costo y caja. ✅
 - **Fase 4 · Compras y control:** órdenes de compra (compromisos) + avance real vs presupuesto.
 - **Fase 5 · Pulido + tests** (invariantes tipo «Σ movimientos = saldo»).
 - **Fase 6 · Mobile simple** al final.

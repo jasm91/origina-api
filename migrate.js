@@ -7,6 +7,7 @@
  * Fase 0: tenants, users, obras.
  * Fase 1: capitulos_estandar, insumos, partidas_catalogo, apu_lineas.
  * Fase 2: presupuesto_items (presupuesto por selección + explosión de insumos).
+ * Fase 3: movimientos (libro append-only: pipeline de costo y de caja).
  */
 require('dotenv').config();
 const db = require('./db');
@@ -95,6 +96,26 @@ async function run() {
     cantidad NUMERIC(14,4) NOT NULL DEFAULT 0, orden INTEGER NOT NULL DEFAULT 0,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), UNIQUE (obra_id, partida_id));`);
   await db.query(`CREATE INDEX IF NOT EXISTS idx_presup_obra ON presupuesto_items(obra_id);`);
+
+  // Fase 3: libro de movimientos (append-only). Pipeline de costo (egreso) y de caja (ingreso).
+  await db.query(`CREATE TABLE IF NOT EXISTS movimientos (
+    id SERIAL PRIMARY KEY,
+    tenant_id INTEGER NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    obra_id INTEGER NOT NULL REFERENCES obras(id) ON DELETE CASCADE,
+    flujo TEXT NOT NULL CHECK (flujo IN ('egreso','ingreso')),
+    etapa TEXT NOT NULL CHECK (etapa IN ('comprometido','real','contratado','facturado','cobrado')),
+    monto NUMERIC(14,2) NOT NULL,
+    fecha DATE NOT NULL DEFAULT CURRENT_DATE,
+    concepto TEXT NOT NULL,
+    contraparte TEXT,
+    doc_ref TEXT,
+    partida_id INTEGER REFERENCES partidas_catalogo(id) ON DELETE SET NULL,
+    created_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CHECK ( (flujo='egreso' AND etapa IN ('comprometido','real'))
+         OR (flujo='ingreso' AND etapa IN ('contratado','facturado','cobrado')) ));`);
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_mov_obra ON movimientos(obra_id);`);
+  await db.query(`CREATE INDEX IF NOT EXISTS idx_mov_obra_flujo ON movimientos(obra_id, flujo, etapa);`);
 
   await seedIfEmpty();
   await ensureCatalogoBaseline();

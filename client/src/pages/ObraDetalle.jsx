@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { api, fmt, getUser } from '../api';
+import { api, fmt, fdate, getUser } from '../api';
 
 const tipoLabel = { material: 'Material', mano_obra: 'Mano de obra', equipo: 'Equipo', subcontrato: 'Subcontrato' };
+const etapaLabel = { comprometido: 'Comprometido', real: 'Pago real', contratado: 'Contratado', facturado: 'Facturado', cobrado: 'Cobrado' };
+const ETAPAS_POR_FLUJO = { egreso: ['comprometido', 'real'], ingreso: ['contratado', 'facturado', 'cobrado'] };
 
 export default function ObraDetalle() {
   const { id } = useParams();
@@ -12,13 +14,36 @@ export default function ObraDetalle() {
   const [partidas, setPartidas] = useState([]);
   const [nl, setNl] = useState({ partida_id: '', cantidad: '' });
   const [expl, setExpl] = useState(null);       // { rows, total }
+  const [tablero, setTablero] = useState(null);
+  const [movs, setMovs] = useState([]);
+  const [nm, setNm] = useState({ flujo: 'egreso', etapa: 'comprometido', monto: '', concepto: '', contraparte: '', doc_ref: '', fecha: '' });
   const [err, setErr] = useState('');
-  const canWrite = ['admin', 'aprobador', 'administrativo'].includes(getUser()?.role);
+  const role = getUser()?.role;
+  const canWrite = ['admin', 'aprobador', 'administrativo'].includes(role);
+  const canApprove = ['admin', 'aprobador'].includes(role);
 
   const loadPres = () => api(`/obras/${id}/presupuesto`).then(setData).catch((e) => setErr(e.message));
   const loadExpl = () => api(`/obras/${id}/explosion`).then(setExpl).catch((e) => setErr(e.message));
+  const loadDinero = () => {
+    api(`/obras/${id}/tablero`).then(setTablero).catch((e) => setErr(e.message));
+    api(`/obras/${id}/movimientos`).then((r) => setMovs(r.rows)).catch((e) => setErr(e.message));
+  };
   useEffect(() => { loadPres(); api('/partidas?limit=200').then((r) => setPartidas(r.rows)).catch(() => {}); }, [id]);
-  useEffect(() => { if (tab === 'insumos') loadExpl(); }, [tab, id]);
+  useEffect(() => { if (tab === 'insumos') loadExpl(); if (tab === 'dinero') loadDinero(); }, [tab, id]);
+
+  const addMov = async () => {
+    if (!nm.concepto.trim() || !Number(nm.monto)) { setErr('Concepto y monto son obligatorios.'); return; }
+    setErr('');
+    try {
+      await api(`/obras/${id}/movimientos`, { method: 'POST', body: {
+        flujo: nm.flujo, etapa: nm.etapa, monto: Number(nm.monto), concepto: nm.concepto.trim(),
+        contraparte: nm.contraparte.trim() || null, doc_ref: nm.doc_ref.trim() || null, fecha: nm.fecha || null } });
+      setNm({ ...nm, monto: '', concepto: '', contraparte: '', doc_ref: '', fecha: '' });
+      loadDinero();
+    } catch (e) { setErr(e.message); }
+  };
+  const delMov = async (m) => { try { await api(`/movimientos/${m.id}`, { method: 'DELETE' }); loadDinero(); } catch (e) { setErr(e.message); } };
+  const setFlujo = (flujo) => setNm({ ...nm, flujo, etapa: ETAPAS_POR_FLUJO[flujo][0] });
 
   const add = async () => {
     if (!nl.partida_id) return;
@@ -58,6 +83,7 @@ export default function ObraDetalle() {
       <div className="tabs">
         <button className={tab === 'presupuesto' ? 'active' : ''} onClick={() => setTab('presupuesto')}>Presupuesto</button>
         <button className={tab === 'insumos' ? 'active' : ''} onClick={() => setTab('insumos')}>Explosión de insumos</button>
+        <button className={tab === 'dinero' ? 'active' : ''} onClick={() => setTab('dinero')}>Dinero</button>
       </div>
       {err && <div className="error">{err}</div>}
 
@@ -129,6 +155,77 @@ export default function ObraDetalle() {
             </tbody>
           </table>
           {expl && <div className="right" style={{ marginTop: 12, fontSize: 16 }}>Total insumos (costo directo): <b className="num">{fmt(expl.total)}</b></div>}
+        </div>
+      )}
+
+      {tab === 'dinero' && tablero && (
+        <div style={{ marginTop: 14 }}>
+          {/* Pipeline de COSTO */}
+          <div className="navgroup-title" style={{ paddingLeft: 2 }}>Costo · Presupuesto → Comprometido → Real</div>
+          <div className="cards" style={{ margin: '8px 0 4px' }}>
+            <div className="card"><div className="k">Presupuestado (costo)</div><div className="v num">{fmt(tablero.costo.presupuesto)}</div></div>
+            <div className="card"><div className="k">Comprometido</div><div className="v num">{fmt(tablero.costo.comprometido)}</div></div>
+            <div className="card"><div className="k">Pagado (real)</div><div className="v num">{fmt(tablero.costo.real)}</div></div>
+            <div className="card"><div className="k">Por comprometer</div><div className="v num" style={{ color: tablero.costo.por_comprometer < 0 ? 'var(--red)' : 'var(--ink)' }}>{fmt(tablero.costo.por_comprometer)}</div></div>
+          </div>
+
+          {/* Pipeline de CAJA */}
+          <div className="navgroup-title" style={{ paddingLeft: 2, marginTop: 10 }}>Caja · Contratado → Facturado → Cobrado</div>
+          <div className="cards" style={{ margin: '8px 0 4px' }}>
+            <div className="card"><div className="k">Objetivo de venta</div><div className="v num">{fmt(tablero.caja.objetivo_venta)}</div></div>
+            <div className="card"><div className="k">Contratado</div><div className="v num">{fmt(tablero.caja.contratado)}</div></div>
+            <div className="card"><div className="k">Facturado</div><div className="v num">{fmt(tablero.caja.facturado)}</div></div>
+            <div className="card"><div className="k">Cobrado</div><div className="v num">{fmt(tablero.caja.cobrado)}</div></div>
+          </div>
+
+          {/* Resultado */}
+          <div className="navgroup-title" style={{ paddingLeft: 2, marginTop: 10 }}>Resultado</div>
+          <div className="cards" style={{ margin: '8px 0 16px' }}>
+            <div className="card"><div className="k">Margen presupuestado</div><div className="v num">{fmt(tablero.resultado.margen_presupuestado)}</div></div>
+            <div className="card"><div className="k">Caja neta (cobrado − pagado)</div><div className="v num" style={{ color: tablero.resultado.caja_neta < 0 ? 'var(--red)' : 'var(--green)' }}>{fmt(tablero.resultado.caja_neta)}</div></div>
+            <div className="card"><div className="k">Por facturar</div><div className="v num">{fmt(tablero.caja.por_facturar)}</div></div>
+            <div className="card"><div className="k">Por cobrar</div><div className="v num">{fmt(tablero.caja.por_cobrar)}</div></div>
+          </div>
+
+          {/* Alta de movimiento */}
+          {canWrite && (
+            <div className="card" style={{ marginBottom: 16 }}>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+                <select value={nm.flujo} onChange={(e) => setFlujo(e.target.value)}>
+                  <option value="egreso">Egreso (costo)</option>
+                  <option value="ingreso">Ingreso (caja)</option>
+                </select>
+                <select value={nm.etapa} onChange={(e) => setNm({ ...nm, etapa: e.target.value })}>
+                  {ETAPAS_POR_FLUJO[nm.flujo].map((et) => <option key={et} value={et}>{etapaLabel[et]}</option>)}
+                </select>
+                <input type="number" placeholder="Monto (Bs)" value={nm.monto} onChange={(e) => setNm({ ...nm, monto: e.target.value })} style={{ width: 140 }} />
+                <input placeholder="Concepto" value={nm.concepto} onChange={(e) => setNm({ ...nm, concepto: e.target.value })} style={{ flex: 1, minWidth: 180 }} />
+                <input placeholder={nm.flujo === 'egreso' ? 'Proveedor' : 'Cliente'} value={nm.contraparte} onChange={(e) => setNm({ ...nm, contraparte: e.target.value })} style={{ width: 150 }} />
+                <input placeholder="Doc (OC/Factura)" value={nm.doc_ref} onChange={(e) => setNm({ ...nm, doc_ref: e.target.value })} style={{ width: 140 }} />
+                <input type="date" value={nm.fecha} onChange={(e) => setNm({ ...nm, fecha: e.target.value })} />
+                <button className="btn" onClick={addMov}>Registrar</button>
+              </div>
+            </div>
+          )}
+
+          <table>
+            <thead><tr><th>Fecha</th><th>Flujo</th><th>Etapa</th><th>Concepto</th><th>Contraparte</th><th>Doc</th><th className="right">Monto</th>{canApprove && <th></th>}</tr></thead>
+            <tbody>
+              {movs.map((m) => (
+                <tr key={m.id}>
+                  <td className="num">{fdate(m.fecha)}</td>
+                  <td><span className={`pill ${m.flujo === 'ingreso' ? 'green' : 'mut'}`}>{m.flujo === 'ingreso' ? 'Ingreso' : 'Egreso'}</span></td>
+                  <td>{etapaLabel[m.etapa]}</td>
+                  <td>{m.concepto}</td>
+                  <td>{m.contraparte || '—'}</td>
+                  <td>{m.doc_ref || '—'}</td>
+                  <td className="right num" style={{ color: m.flujo === 'ingreso' ? 'var(--green)' : 'var(--ink)' }}>{fmt(m.monto)}</td>
+                  {canApprove && <td className="right"><button className="btn secondary" style={{ padding: '4px 8px' }} onClick={() => delMov(m)}>✕</button></td>}
+                </tr>
+              ))}
+              {!movs.length && <tr><td colSpan={canApprove ? 8 : 7} className="mut" style={{ padding: 16 }}>Sin movimientos. Registrá el primer compromiso o cobro con el formulario de arriba.</td></tr>}
+            </tbody>
+          </table>
         </div>
       )}
     </>
